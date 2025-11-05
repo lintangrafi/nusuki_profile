@@ -1,0 +1,52 @@
+{
+  "version": 2,
+  "name": "nusuki-profile",
+  "builds": [
+    {
+      "src": "public/vercel-server.php",
+      "use": "@vercel/php@9.5.0",
+      "config": {
+        "composerVersion": "latest",
+        "directory": "."
+      }
+    },
+    {
+      "src": "build/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/build/(.*)",
+      "dest": "/build/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/storage/(.*)",
+      "dest": "/storage/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/vercel-server.php"
+    }
+  ],
+  "functions": {
+    "public/vercel-server.php": {
+      "runtime": "@vercel/php@9.5.0",
+      "excludeFiles": "{.git,node_modules,composer.lock,vendor/composer/installed.json,__tests__,fixtures,docs,dev,bin,bootstrap/cachebootstrap/app.php,storage/*.log,tests}"
+    }
+  },
+  "env": {
+    "APP_ENV": "production",
+    "APP_DEBUG": "false",
+    "APP_URL": "https://nusuki-profile.vercel.app",
+    "SESSION_DRIVER": "database",
+    "CACHE_DRIVER": "database",
+    "QUEUE_CONNECTION": "database"
+  }
+}

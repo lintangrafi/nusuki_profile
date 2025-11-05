@@ -100,6 +100,7 @@ The `vercel.json` file contains the configuration for deployment:
 - Route rewrites to ensure Laravel routing works
 - Environment variables setup
 - Build settings
+- Removed the functions property to avoid conflicts with builds property
 
 ## Post-Deployment Steps
 

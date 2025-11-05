@@ -1,12 +1,10 @@
 {
   "version": 2,
-  "name": "nusuki-profile",
-  "builds": [
-    {
-      "src": "public/index.php",
-      "use": "@vercel/php"
+  "functions": {
+    "public/index.php": {
+      "runtime": "@vercel/php"
     }
-  ],
+  },
   "routes": [
     {
       "src": "/(.*)",

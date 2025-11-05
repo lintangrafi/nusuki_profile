@@ -3,18 +3,14 @@
   "name": "nusuki-profile",
   "builds": [
     {
-      "src": "public/vercel-server.php",
-      "use": "@vercel/php@9.5.0",
-      "config": {
-        "composerVersion": "latest",
-        "directory": "."
-      }
+      "src": "public/index.php",
+      "use": "@vercel/php"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/public/vercel-server.php"
+      "dest": "/public/index.php"
     }
   ],
   "env": {

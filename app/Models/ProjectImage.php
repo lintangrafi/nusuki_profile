@@ -5,6 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $project_id
+ * @property string $image_path
+ * @property string|null $alt_text
+ * @property int $order
+ * @property-read Project $project
+ */
 class ProjectImage extends Model
 {
     use HasFactory;

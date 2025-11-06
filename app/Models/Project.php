@@ -6,6 +6,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * @property string $title
+ * @property string $slug
+ * @property string|null $description
+ * @property string|null $category
+ * @property string|null $client
+ * @property string|null $location
+ * @property string|null $url
+ * @property \Illuminate\Support\Carbon|null $project_date
+ * @property bool $is_featured
+ * @property bool $is_active
+ * @property int $order
+ * @property-read \Illuminate\Database\Eloquent\Collection|ProjectImage[] $images
+ * @property-read ProjectImage|null $primaryImage
+ */
 class Project extends Model
 {
     use HasFactory;
@@ -59,7 +74,16 @@ class Project extends Model
 
         static::saving(function ($project) {
             if (! $project->isDirty('slug')) {
-                $project->slug = Str::slug($project->title);
+                $baseSlug = Str::slug($project->title);
+                $slug = $baseSlug;
+                $count = 1;
+                
+                // Check if slug already exists, and if so, append a number
+                while (static::where('slug', $slug)->where('id', '!=', $project->id)->exists()) {
+                    $slug = $baseSlug . '-' . $count++;
+                }
+                
+                $project->slug = $slug;
             }
         });
     }

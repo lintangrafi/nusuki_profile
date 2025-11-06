@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 // Use the Image manager directly when available. Avoid hard dependency on the Facade so
 // the service can fail gracefully if the package or extensions are not present.
 use Intervention\Image\ImageManager;
+use Intervention\Image\Facades\Image as ImageFacade;
 
 class ImageOptimizationService
 {
@@ -21,13 +23,13 @@ class ImageOptimizationService
         try {
             // Determine image handler
             if (class_exists('\Intervention\Image\Facades\Image')) {
-                $image = \Intervention\Image\Facades\Image::make(Storage::disk('public')->path($filePath));
+                $image = ImageFacade::make(Storage::disk('public')->path($filePath));
             } elseif (class_exists(ImageManager::class)) {
                 $manager = new ImageManager(extension_loaded('imagick') ? 'imagick' : 'gd');
                 $image = $manager->make(Storage::disk('public')->path($filePath));
             } else {
                 // No image library available; log and return false so upload can continue.
-                \Log::warning('ImageOptimizationService: Intervention Image package not available. Skipping optimization for ' . $filePath);
+                Log::warning('ImageOptimizationService: Intervention Image package not available. Skipping optimization for ' . $filePath);
                 return false;
             }
 
@@ -47,7 +49,7 @@ class ImageOptimizationService
             // Catch Throwable to include PHP Errors (like Class not found) and ensure
             // the upload flow doesn't abort - we log and return false so the controller
             // can continue saving the DB record.
-            \Log::error('Error optimizing image: ' . $e->getMessage());
+            Log::error('Error optimizing image: ' . $e->getMessage());
             return false;
         }
     }
@@ -65,12 +67,12 @@ class ImageOptimizationService
         try {
             // Determine image handler
             if (class_exists('\Intervention\Image\Facades\Image')) {
-                $originalImage = \Intervention\Image\Facades\Image::make(Storage::disk('public')->path($originalPath));
+                $originalImage = ImageFacade::make(Storage::disk('public')->path($originalPath));
             } elseif (class_exists(ImageManager::class)) {
                 $manager = new ImageManager(extension_loaded('imagick') ? 'imagick' : 'gd');
                 $originalImage = $manager->make(Storage::disk('public')->path($originalPath));
             } else {
-                \Log::warning('ImageOptimizationService: Intervention Image package not available. Skipping responsive image creation for ' . $originalPath);
+                Log::warning('ImageOptimizationService: Intervention Image package not available. Skipping responsive image creation for ' . $originalPath);
                 return $optimizedPaths;
             }
 
@@ -94,7 +96,7 @@ class ImageOptimizationService
 
             return $optimizedPaths;
         } catch (\Exception $e) {
-            \Log::error('Error creating responsive images: ' . $e->getMessage());
+            Log::error('Error creating responsive images: ' . $e->getMessage());
             return $optimizedPaths;
         }
     }
